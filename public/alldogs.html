@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<body>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+</head>
+
+<htr />
+<h1 id="header">all dogs</h1>
+<hr />
+
+</body>
+<script>
+  $( document ).ready(() => {
+    const dogName = window.location.pathname.split('/')[2];
+    $.ajax({
+      url: `/api/alldogs/${dogName}`,
+      complete: function(data) {
+        document.getElementById('header').innerText = `All the ${dogName} dogs!`
+        const imgSrcArray = JSON.parse(data.responseJSON).message
+
+        imgSrcArray.map((img) => {
+          const dogImage = document.createElement('img')
+          dogImage.src = img
+          document.body.appendChild(dogImage)
+        })
+      }
+    })
+  });
+</script>
+</html>

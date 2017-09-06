@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<body>
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+
+</head>
+<h1>My First Heading</h1>
+<p>My first paragraph.</p>
+<select id="select"></select>
+<hr />
+<img id="result" src="" />
+<hr />
+<a id="alldogslink" href="">see all dogs</a>
+<hr />
+<iframe width="300" height="400" src="http://dev.iheart.com/podcast/139-Bobby-Bones-Show-25100459/episode/jon-pardi-in-studio-pet-28434742/?embed=true" frameborder="0"></iframe>
+
+
+</body>
+<script>
+  $( document ).ready(() => {
+
+    $.ajax({
+      url: '/data',
+      complete: function(data) {
+        const imgSrc = JSON.parse(data.responseJSON).message
+        document.getElementById('result').src = imgSrc
+      }
+    })
+
+    function getDog(dog) {
+      $.ajax({
+        url: `https://dog.ceo/api/breed/${dog}/images/random`,
+        complete: (data) => {
+          const imgSrc = data.responseJSON.message
+          document.getElementById('result').src = imgSrc
+        }
+      })
+    }
+
+
+    $.ajax({
+      url: '/dogbreeds',
+      complete: (data) => {
+        const dogsArray = JSON.parse(data.responseJSON).message
+        const dogSelect = document.getElementById("select")
+
+        dogsArray.map((dog) => {
+          const option = document.createElement("option")
+          option.text = dog
+          option.setAttribute('data-dog-type', dog)
+          dogSelect.add(option)
+        })
+      }
+    }).then(() => {
+      document.getElementById('select').addEventListener('change', function() {
+        document.getElementById('alldogslink').href = `/alldogs/${this.value}/`
+        getDog(this.value);
+      }, false);
+    })
+
+
+  });
+</script>
+</html>
